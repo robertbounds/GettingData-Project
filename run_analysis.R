@@ -1,3 +1,5 @@
+library(data.table)
+
 run_analysis <- function() {
         
         ## Directory navigation & file reading block
@@ -9,6 +11,7 @@ run_analysis <- function() {
         setwd("UCI HAR Dataset")
         datasetHome <- getwd()
         features    <- read.table("features.txt")
+        features    <- features[, 2] # simplify features its column containing variable names
         ## test directory
         setwd("test")
         xTest       <- read.table("X_test.txt")
@@ -30,7 +33,19 @@ run_analysis <- function() {
         ## rename variables for data frames
         names(xData)       <- features
         names(yData)       <- "ACTIVITY"
-        names(subjectData) <- "SUBJECT ID"
+        names(subjectData) <- "SUBJECT"
+        
+        ## subset data for means and standard deviations
+        meanData  <- xData[, grep("mean()",
+                                 names(xData),
+                                 fixed = TRUE
+                                 )
+                          ]
+        stDevData <- xData[, grep("std()",
+                                  names(xData),
+                                  fixed = TRUE
+                                  )
+                           ]
         
         ## rename observation data for activities
         ## keys/values determined by looking at activity_labels.txt
@@ -41,13 +56,16 @@ run_analysis <- function() {
         yData[yData == 5] <- "STANDING"
         yData[yData == 6] <- "LAYING"
         
-        ## glue subject id and activity names to front of dataset
-        fullData <- cbind(yData, xData)
-        fullData <- cbind(subjectData, fullData)
+        ## glue subject and activity names to datasets
+        meanData  <- cbind(yData, meanData)
+        meanData  <- cbind(subjectData, meanData)
+        stDevData <- cbind(yData, stDevData)
+        stDevData <- cbind(subjectData, stDevData)
         
-        #######################################################################
-        ###  write code here to subset fullData
-        #######################################################################
+        ## convert frames to tables for relatively faster merging
+        meanData  <- data.table(meanData)
+        stDevData <- data.table(stDevData)
+        
         
         #######################################################################
         ###  Write code here to construct tidy data set
