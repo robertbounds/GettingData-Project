@@ -56,18 +56,33 @@ run_analysis <- function() {
         yData[yData == 5] <- "STANDING"
         yData[yData == 6] <- "LAYING"
         
-        ## glue subject and activity names to datasets
-        meanData  <- cbind(yData, meanData)
-        meanData  <- cbind(subjectData, meanData)
-        stDevData <- cbind(yData, stDevData)
-        stDevData <- cbind(subjectData, stDevData)
         
-        ## convert frames to tables for relatively faster merging
-        meanData  <- data.table(meanData)
-        stDevData <- data.table(stDevData)
-        
+        mergedData <- data.table(meanData, stDevData)
+        mergedData <- data.table(yData, mergedData)
+        mergedData <- data.table(subjectData, mergedData)
+        mergedData <- mergedData[order(SUBJECT, ACTIVITY)]
         
         #######################################################################
         ###  Write code here to construct tidy data set
         #######################################################################
+        
+        tidyData <- aggregate(mergedData,
+                              by = list(mergedData$SUBJECT, 
+                                        mergedData$ACTIVITY),
+                              FUN = mean
+                              )
+        tidyData <- data.table(tidyData)
+        names(tidyData)[1:2] <- c("SUBJECT", "ACTIVITY")
+        tidyData[, 3:=NULL]
+        tidyData[, 3:=NULL]
+        
+        write.table(tidyData,
+                    file = "tidyData.txt",
+                    row.names = FALSE
+                    )
+        
+        #write.csv(tidyData, 
+        #         file = "tidyData.csv", 
+        #          row.names = FALSE
+        #          )
 }
