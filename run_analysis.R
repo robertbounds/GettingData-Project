@@ -8,6 +8,7 @@ run_analysis <- function() {
         ## and reads necessary files along the way.
         ##
         ## dataset home
+        home <- getwd()
         setwd("UCI HAR Dataset")
         datasetHome <- getwd()
         features    <- read.table("features.txt")
@@ -23,9 +24,10 @@ run_analysis <- function() {
         xTrain       <- read.table("X_train.txt")
         yTrain       <- read.table("y_train.txt")
         subjectTrain <- read.table('subject_train.txt')
-        setwd(datasetHome)
+        setwd(home)
         
-        ## initial merges of data frames
+        ## carefully perform initial merges of data frames
+        ## *Test is always bound above *Train
         xData       <- rbind(xTest, xTrain)
         yData       <- rbind(yTest, yTrain)
         subjectData <- rbind(subjectTest, subjectTrain)
@@ -66,23 +68,21 @@ run_analysis <- function() {
         ###  Write code here to construct tidy data set
         #######################################################################
         
+        names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
+        names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
+        
         tidyData <- aggregate(mergedData,
                               by = list(mergedData$SUBJECT, 
                                         mergedData$ACTIVITY),
                               FUN = mean
                               )
+        
         tidyData <- data.table(tidyData)
         names(tidyData)[1:2] <- c("SUBJECT", "ACTIVITY")
         tidyData[, 3:=NULL]
         tidyData[, 3:=NULL]
         
         write.table(tidyData,
-                    file = "tidyData.txt",
-                    row.names = FALSE
+                    file = "tidyData.txt"
                     )
-        
-        #write.csv(tidyData, 
-        #         file = "tidyData.csv", 
-        #          row.names = FALSE
-        #          )
 }
