@@ -12,7 +12,7 @@ run_analysis <- function() {
         setwd("UCI HAR Dataset")
         datasetHome <- getwd()
         features    <- read.table("features.txt")
-        features    <- features[, 2] # simplify features its column containing variable names
+        features    <- features[, 2] # remove column without variable names
         ## test directory
         setwd("test")
         xTest       <- read.table("X_test.txt")
@@ -37,18 +37,6 @@ run_analysis <- function() {
         names(yData)       <- "ACTIVITY"
         names(subjectData) <- "SUBJECT"
         
-        ## subset data for means and standard deviations
-        meanData  <- xData[, grep("mean()",
-                                 names(xData),
-                                 fixed = TRUE
-                                 )
-                          ]
-        stDevData <- xData[, grep("std()",
-                                  names(xData),
-                                  fixed = TRUE
-                                  )
-                           ]
-        
         ## rename observation data for activities
         ## keys/values determined by looking at activity_labels.txt
         yData[yData == 1] <- "WALKING"
@@ -58,31 +46,42 @@ run_analysis <- function() {
         yData[yData == 5] <- "STANDING"
         yData[yData == 6] <- "LAYING"
         
+        ## subset data for means and standard deviations
+        meanData  <- xData[, grep("mean()",
+                                  names(xData),
+                                  fixed = TRUE
+                                  )
+                           ]
+        stDevData <- xData[, grep("std()",
+                                  names(xData),
+                                  fixed = TRUE
+                                  )
+                           ]
         
+        ## Merge all data into a single table
         mergedData <- data.table(meanData, stDevData)
         mergedData <- data.table(yData, mergedData)
         mergedData <- data.table(subjectData, mergedData)
         mergedData <- mergedData[order(SUBJECT, ACTIVITY)]
         
-        #######################################################################
-        ###  Write code here to construct tidy data set
-        #######################################################################
-        
+        ## minor scrubbing of variable names
         names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
-        names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
+        names(mergedData) <- gsub("-", ".", names(mergedData))
         
+        ## find averages of mean and standard deviation
+        ## for each activity, for each subject.
+        ## resulting data is the requested "tidy" data set.
         tidyData <- aggregate(mergedData,
                               by = list(mergedData$SUBJECT, 
                                         mergedData$ACTIVITY),
                               FUN = mean
                               )
         
+        ## perform minor cleaning of the "tidy" data
         tidyData <- data.table(tidyData)
         names(tidyData)[1:2] <- c("SUBJECT", "ACTIVITY")
-        tidyData[, 3:=NULL]
-        tidyData[, 3:=NULL]
+        tidyData[, 3 := NULL]
+        tidyData[, 3 := NULL]
         
-        write.table(tidyData,
-                    file = "tidyData.txt"
-                    )
+        write.table(tidyData, file = "tidyData.txt")
 }
