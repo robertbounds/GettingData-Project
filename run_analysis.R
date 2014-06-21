@@ -63,6 +63,7 @@ run_analysis <- function() {
         ## minor scrubbing of variable names
         names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
         names(mergedData) <- gsub("-", ".", names(mergedData))
+        names(mergedData) <- gsub("BodyBody", "Body", names(mergedData))
         
         ## find averages of means and standard deviations
         ## for each activity, for each subject.
@@ -78,6 +79,7 @@ run_analysis <- function() {
         names(tidyData)[1:2] <- c("SUBJECT", "ACTIVITY")
         tidyData[, 3 := NULL]
         tidyData[, 3 := NULL]
+        tidyData <- tidyData[order(tidyData$SUBJECT), ]
         
         write.table(tidyData, file = "tidyData.txt")
 }
