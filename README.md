@@ -8,7 +8,7 @@
 * README.md
 
 ## How the script works
-The R script, run_analysis.R, requires the directory titled "UCI HAR Dataset" (as well as its original, unmodified contents) to run through to completion.
+The R script, run_analysis.R, must occupy the same directory as the directory titled "UCI HAR Dataset" to run through to completion.
 
 1. The first order of business for run_analysis.R is to parse the directory and read the following data files:
   * activity_labels.txt
@@ -24,3 +24,7 @@ The R script, run_analysis.R, requires the directory titled "UCI HAR Dataset" (a
 4. Then all the data is merged into a single data table, on which some variable name scrubbing occurs.
 5. For each activity for each subject, the average of all mean and standard deviation information is taken.  The compact data set just produced forms the tidy data set.
 6. Lastly, the run_analysis script writes the tidy data set to the file "tidyData.txt".
+
+### Dataset source:
+Davide Anguita, Alessandro Ghio, Luca Oneto, Xavier Parra and Jorge L. Reyes-Ortiz. Human Activity Recognition on Smartphones using a Multiclass Hardware-Friendly Support Vector Machine. International Workshop of Ambient Assisted Living (IWAAL 2012). Vitoria-Gasteiz, Spain. Dec 2012
+[Link to data](http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones)

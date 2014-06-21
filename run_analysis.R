@@ -13,13 +13,13 @@ run_analysis <- function() {
         datasetHome <- getwd()
         features    <- read.table("features.txt")
         features    <- features[, 2] # remove column without variable names
-        ## test directory
+        ## testing directory
         setwd("test")
         xTest       <- read.table("X_test.txt")
         yTest       <- read.table("y_test.txt")
         subjectTest <- read.table("subject_test.txt")
         setwd(datasetHome)
-        ## train directory
+        ## training directory
         setwd("train")
         xTrain       <- read.table("X_train.txt")
         yTrain       <- read.table("y_train.txt")
@@ -27,7 +27,7 @@ run_analysis <- function() {
         setwd(home)
         
         ## carefully perform initial merges of data frames
-        ## *Test is always bound above *Train
+        ## *Test is bound above *Train
         xData       <- rbind(xTest, xTrain)
         yData       <- rbind(yTest, yTrain)
         subjectData <- rbind(subjectTest, subjectTrain)
@@ -57,18 +57,14 @@ run_analysis <- function() {
                                   fixed = TRUE
                                   )
                            ]
-        
-        ## Merge all data into a single table
-        mergedData <- data.table(meanData, stDevData)
-        mergedData <- data.table(yData, mergedData)
-        mergedData <- data.table(subjectData, mergedData)
-        mergedData <- mergedData[order(SUBJECT, ACTIVITY)]
-        
+        ## merge data into a single table
+        mergedData <- cbind(subjectData, yData, meanData, stDevData)
+                
         ## minor scrubbing of variable names
         names(mergedData) <- gsub("\\(\\)", "", names(mergedData))
         names(mergedData) <- gsub("-", ".", names(mergedData))
         
-        ## find averages of mean and standard deviation
+        ## find averages of means and standard deviations
         ## for each activity, for each subject.
         ## resulting data is the requested "tidy" data set.
         tidyData <- aggregate(mergedData,
@@ -77,7 +73,7 @@ run_analysis <- function() {
                               FUN = mean
                               )
         
-        ## perform minor cleaning of the "tidy" data
+        ## perform minor column cleaning of the "tidy" data
         tidyData <- data.table(tidyData)
         names(tidyData)[1:2] <- c("SUBJECT", "ACTIVITY")
         tidyData[, 3 := NULL]
