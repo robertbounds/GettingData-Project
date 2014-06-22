@@ -1,8 +1,5 @@
 # CodeBook.md
 
-3) a codebook that describes the variables, the data, and any transformations or work that you performed to clean
-up the data called CodeBook.md.
-
 ## Data
 Data of various types can be found in this dataset.  Except for SUBJECT and ACTIVITY data, all remaining variables have numeric data bounded between -1 and 1.  SUBJECT data are integer values corresponding to each of the 30 testing and training subjects.  ACTIVITY data are character vectors for names of activities.  The names of the remaining variables are either prefixed with a 't' to denote a measurement in the time domain, or prefixed with an 'f' to denote a measurement in the frequency domain.  'Acc' is abbreviated for accelerometer, and 'Gyro' is short for gyroscope.  Each variable will contain either 'mean' or 'std' in its name to specify whether it is a mean or standard deviation value.  Some variables will be suffixed with a '.X', '.Y' or '.Z' to describe the signal sample in the X, Y or Z direction.
 
